@@ -117,6 +117,7 @@ extension ViewController: UICollectionViewDataSourcePrefetching {
             print(maxIndex)
             print("Additional Log: \(maxIndex)")
             print("Second additional Log: \(maxIndex)")
+            print("Third additional log: \(maxIndex)")
             fetchNextPage()
         }
     }
