@@ -72,7 +72,6 @@ class FirstSectionCollectionViewCell: UICollectionViewCell {
             make.top.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(100)
-//            make.height.equalTo(200)
         }
     }
     
