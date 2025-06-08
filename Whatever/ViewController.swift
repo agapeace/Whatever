@@ -113,7 +113,7 @@ extension ViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         guard let maxIndex = indexPaths.map({ $0.item }).max() else { return }
         print(maxIndex)
-        if maxIndex >= sourceArr.count - 5 && !isPrefetching {
+        if /*maxIndex >= sourceArr.count - 5 && */!isPrefetching {
             print(maxIndex)
             print("Additional Log: \(maxIndex)")
             print("Second additional Log: \(maxIndex)")
