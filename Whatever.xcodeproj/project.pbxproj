@@ -15,6 +15,7 @@
 		A7183E832DCA8D6A0084CE9D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A7183E822DCA8D6A0084CE9D /* SnapKit */; };
 		A799BFFD2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A799BFFC2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift */; };
 		A7B560872DE61B22008E115E /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B560862DE61B22008E115E /* NetworkManager.swift */; };
+		A7B773092DF5B73300B0EDDC /* InfoFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B773082DF5B73300B0EDDC /* InfoFile.swift */; };
 		A7EE69C72DEF70360085DE4C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A7EE69C62DEF70360085DE4C /* Kingfisher */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 		A7183E792DCA86CF0084CE9D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A799BFFC2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstSectionCollectionViewCell.swift; sourceTree = "<group>"; };
 		A7B560862DE61B22008E115E /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		A7B773082DF5B73300B0EDDC /* InfoFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoFile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				A7B560862DE61B22008E115E /* NetworkManager.swift */,
 				A7183E792DCA86CF0084CE9D /* ViewController.swift */,
 				A799BFFC2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift */,
+				A7B773082DF5B73300B0EDDC /* InfoFile.swift */,
 			);
 			path = Whatever;
 			sourceTree = "<group>";
@@ -156,6 +159,7 @@
 				A7B560872DE61B22008E115E /* NetworkManager.swift in Sources */,
 				A7183E7E2DCA86CF0084CE9D /* AppDelegate.swift in Sources */,
 				A799BFFD2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift in Sources */,
+				A7B773092DF5B73300B0EDDC /* InfoFile.swift in Sources */,
 				A7183E7F2DCA86CF0084CE9D /* SceneDelegate.swift in Sources */,
 				A7183E802DCA86CF0084CE9D /* ViewController.swift in Sources */,
 			);

@@ -115,6 +115,7 @@ extension ViewController: UICollectionViewDataSourcePrefetching {
         print(maxIndex)
         if maxIndex >= sourceArr.count - 5 && !isPrefetching {
             print(maxIndex)
+            print("Additional Log: \(maxIndex)")
             fetchNextPage()
         }
     }
