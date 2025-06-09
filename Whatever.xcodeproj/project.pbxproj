@@ -69,12 +69,28 @@
 				A7183E752DCA86CF0084CE9D /* Info.plist */,
 				A7183E772DCA86CF0084CE9D /* LaunchScreen.storyboard */,
 				A7183E782DCA86CF0084CE9D /* SceneDelegate.swift */,
-				A7B560862DE61B22008E115E /* NetworkManager.swift */,
+				A72B38522DF6AA8800BF34B1 /* Networks */,
+				A72B38512DF6AA7400BF34B1 /* FirstScreen */,
+			);
+			path = Whatever;
+			sourceTree = "<group>";
+		};
+		A72B38512DF6AA7400BF34B1 /* FirstScreen */ = {
+			isa = PBXGroup;
+			children = (
 				A7183E792DCA86CF0084CE9D /* ViewController.swift */,
 				A799BFFC2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift */,
 				A7B773082DF5B73300B0EDDC /* InfoFile.swift */,
 			);
-			path = Whatever;
+			path = FirstScreen;
+			sourceTree = "<group>";
+		};
+		A72B38522DF6AA8800BF34B1 /* Networks */ = {
+			isa = PBXGroup;
+			children = (
+				A7B560862DE61B22008E115E /* NetworkManager.swift */,
+			);
+			path = Networks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
