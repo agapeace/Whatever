@@ -66,6 +66,37 @@ class NetworkManager2 {
         
         return modifier
     }
+    
+    func fetchPlayerDetails(playerId: Int, completion: @escaping (PlayerResponse) -> Void) {
+        
+        var urlComponents = URLComponents(string: "https://sofascore.p.rapidapi.com/players/detail")
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "playerId", value: String(playerId))
+        ]
+        
+        guard let url = urlComponents?.url else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print(error)
+                return
+            }
+            
+            guard let data = data else { return }
+            
+            do {
+                let parsedData = try JSONDecoder().decode(PlayerInfoResponse.self, from: data)
+                print(parsedData)
+                completion(parsedData.player)
+                
+            }catch {
+                print(error)
+            }
+        }.resume()
+    }
 }
 
 
@@ -91,6 +122,7 @@ struct TeamResponse: Decodable {
     let id: Int
     let name: String
     let sport: SportResponse?
+    let teamColors: TeamColors?
 }
 
 struct SportResponse: Decodable {
@@ -98,5 +130,25 @@ struct SportResponse: Decodable {
 }
 
 struct CountryResponse: Decodable {
+    let alpha2: String
     let name: String
+}
+
+struct TeamColors: Decodable {
+    let primary: String
+}
+
+
+struct PlayerInfoResponse: Decodable {
+    let player: PlayerResponse
+}
+
+struct PlayerResponse: Decodable {
+    let shortName: String
+    let position: String
+    let jerseyNumber: String?
+    let height: Int
+    let preferredFoot: String
+    let dateOfBirthTimestamp: Int
+    let contractUntilTimestamp: Int?
 }

@@ -101,7 +101,7 @@ extension SecondScreen: UICollectionViewDelegate, UICollectionViewDataSource {
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return resourceArr.count == 0 ? 5 : resourceArr.count
+        return resourceArr.count == 0 ? 0 : resourceArr.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -110,10 +110,15 @@ extension SecondScreen: UICollectionViewDelegate, UICollectionViewDataSource {
         
         if resourceArr.count > 0 {
             let currentElement = resourceArr[indexPath.row].entity
-//            print(currentElement)
-        cell.configureElements(playerId: currentElement.id, playerName: currentElement.name, clubId: currentElement.team?.id ?? 241802, clubName: currentElement.team?.name ?? "No club")
+            cell.configureElements(playerId: currentElement.id, playerName: currentElement.name, clubId: currentElement.team?.id ?? 241802, clubName: currentElement.team?.name ?? "No club")
         }
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = PlayerInfoViewController(player: resourceArr[indexPath.row].entity)
+//        let vc = PlayerInfoViewController(playerId: 750, playerName: "Cristiano Ronaldo")
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
