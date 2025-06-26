@@ -7,6 +7,16 @@
 
 import UIKit
 
+enum PlayerFetchType: Hashable {
+    case fullInfo
+    case positions
+}
+
+struct PlayerFetchKey: Hashable {
+    let playerId: Int
+    let type: PlayerFetchType
+}
+
 class SecondScreen: UIViewController {
     
     private lazy var searchTextField: UISearchTextField = {
@@ -28,10 +38,14 @@ class SecondScreen: UIViewController {
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
+        collection.prefetchDataSource = self
         return collection
     }()
     
     private var resourceArr: [ResultResponse] = []
+    private var fetchingSet = Set<PlayerFetchKey>()
+    private let resourceLock = NSLock()
+    private var cancelledPrefetchSet = Set<PlayerFetchKey>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,13 +99,24 @@ class SecondScreen: UIViewController {
 extension SecondScreen: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let text = textField.text else { return false }
-        NetworkManager2.shared.searchBarRequest(item: text, type: .all, page: 0) {[weak self] response in
-            self?.resourceArr = response
-            
+        NetworkManager2.shared.searchBarRequest(item: text, type: .all, page: 0) { response in
             DispatchQueue.main.async {
-                self?.personCollectionView.reloadData()
+                self.resourceLock.lock()
+                self.resourceArr = response
+                self.resourceLock.unlock()
+            
+                self.personCollectionView.reloadData()
+                
+                print("Presumably prefetching visible values")
+                self.personCollectionView.performBatchUpdates(nil) { _ in
+                    let visibleIndexPaths = self.personCollectionView.indexPathsForVisibleItems
+                    print(visibleIndexPaths.count)
+                    print(visibleIndexPaths)
+                    self.collectionView(self.personCollectionView, prefetchItemsAt: visibleIndexPaths)
+                }
             }
         }
+        
         return textField.resignFirstResponder()
     }
 }
@@ -120,5 +145,68 @@ extension SecondScreen: UICollectionViewDelegate, UICollectionViewDataSource {
         let vc = PlayerInfoViewController(player: resourceArr[indexPath.row].entity)
 //        let vc = PlayerInfoViewController(playerId: 750, playerName: "Cristiano Ronaldo")
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension SecondScreen: UICollectionViewDataSourcePrefetching {
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            let playerId = resourceArr[indexPath.item].entity.id
+            
+            let fullInfoKey = PlayerFetchKey(playerId: playerId, type: .fullInfo)
+            let positionsKey = PlayerFetchKey(playerId: playerId, type: .positions)
+            
+            if resourceArr[indexPath.item].entity.fullInfo == nil,
+               !fetchingSet.contains(fullInfoKey) {
+                
+                fetchingSet.insert(fullInfoKey)
+                
+                NetworkManager2.shared.fetchPlayerDetails(playerId: playerId) { [weak self] response in
+                    guard let self = self else { return }
+                    DispatchQueue.main.async {
+                        self.resourceLock.lock()
+                        defer {
+                            self.resourceLock.unlock()
+                            self.fetchingSet.remove(fullInfoKey)
+                        }
+            
+                        guard self.resourceArr.indices.contains(indexPath.item) else { return }
+                        var entity = self.resourceArr[indexPath.item].entity
+                        entity.fullInfo = response
+                        self.resourceArr[indexPath.item].entity = entity
+                        print("✅ Fetched full info for player id \(playerId)")
+                        
+                        NetworkManager2.shared.fetchPlayerPositions(playerId: playerId) { positions in
+                            DispatchQueue.main.async {
+                                self.resourceLock.lock()
+                                defer {
+                                    self.resourceLock.unlock()
+                                    self.fetchingSet.remove(fullInfoKey)
+                                }
+                                                    
+                                guard self.resourceArr.indices.contains(indexPath.item) else { return }
+                                var entity = self.resourceArr[indexPath.item].entity
+                                entity.positions = positions
+                                self.resourceArr[indexPath.item].entity = entity
+                                                    
+                                print("✅ Fetched positions player id \(playerId)")
+                                print(entity)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            guard resourceArr.indices.contains(indexPath.item) else { continue }
+            let playerId = resourceArr[indexPath.item].entity.id
+
+            cancelledPrefetchSet.insert(PlayerFetchKey(playerId: playerId, type: .fullInfo))
+            cancelledPrefetchSet.insert(PlayerFetchKey(playerId: playerId, type: .positions))
+        }
     }
 }

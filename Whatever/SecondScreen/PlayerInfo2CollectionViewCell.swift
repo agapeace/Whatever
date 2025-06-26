@@ -14,7 +14,7 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
     private var player: EntityResponse?
     
     static let identifier = "PlayerInfo2CollectionViewCell"
-    private let circleSize = 50
+    private let circleSize = 60
     private lazy var clubImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -65,12 +65,44 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
         return stackView
     }()
     
+    private let thirdInfoStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+//        stackView.spacing = 10
+        stackView.backgroundColor = #colorLiteral(red: 0.03465448692, green: 0.04089608043, blue: 0.04450451583, alpha: 1)
+        stackView.layer.cornerRadius = 15
+        return stackView
+    }()
+    
+    private let valueStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        return stackView
+    }()
+    
+    private lazy var priceView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    private let color: UIColor = #colorLiteral(red: 0.09227979928, green: 0.1076720729, blue: 0.119504787, alpha: 1)
+    
+    private lazy var higherButton = createCustomButton()
+    private lazy var lowerButton = createCustomButton(arrowColor: .systemRed, isArrowDown: true)
+    
     private lazy var nationalityLabel = createCustomLabel(text: "Nationality")
     private lazy var birthDateLabel = createCustomLabel(text: "Age")
     private lazy var heightLabel = createCustomLabel(text: "Height")
     private lazy var footLabel = createCustomLabel(text: "Foot")
     private lazy var positionLabel = createCustomLabel(text: "Position")
     private lazy var shirtNumberLabel = createCustomLabel(text: "Shirt Number")
+    
+    private lazy var valueLabel = createCustomLabel(text: "Market Value")
+    private lazy var questionLabel = createCustomLabel(text: "Is market value higher or lower?", textColor: .white, numberOfLines: 1)
     
     func configureElements(playerInfo: PlayerResponse, player: EntityResponse) {
         self.player = player
@@ -82,6 +114,7 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
         createLabelAttributes(label: birthDateLabel, text: String(age.fullYears) + " yrs")
         createLabelAttributes(label: heightLabel, text: String(playerInfo.height) + " cm")
         createLabelAttributes(label: footLabel, text: playerInfo.preferredFoot.uppercased())
+        
         let modifier = NetworkManager2.shared.createRequest()
         let clubUrl = URL(string: "https://sofascore.p.rapidapi.com/teams/get-logo?teamId=\(player.team?.id ?? 750)")
         clubImageView.kf.setImage(with: clubUrl, options: [.requestModifier(modifier)])
@@ -90,7 +123,8 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
         contractInfoLabel.text = playerInfo.contractUntilTimestamp == nil ? "" : "Contract until " + formatDate(contract.date)
         
         createLabelAttributes(label: positionLabel, text: playerInfo.position)
-        createLabelAttributes(label: shirtNumberLabel, text: playerInfo.jerseyNumber ?? "")
+        playerInfo.jerseyNumber == nil ? shirtNumberLabel.isHidden = true : createLabelAttributes(label: shirtNumberLabel, text: playerInfo.jerseyNumber!)
+        playerInfo.proposedMarketValue == nil ? thirdInfoStackView.isHidden = true : createLabelAttributes(label: valueLabel, text: formatMarketValue(playerInfo.proposedMarketValue!), textColor: #colorLiteral(red: 0.9098039216, green: 0.7003651261, blue: 0.2686780095, alpha: 1))
     }
 
     override init(frame: CGRect) {
@@ -103,7 +137,9 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
         setUpContractStackView()
         setUpDetailInfoStackView()
         setUpSecondDetailInfoStackView()
-        
+        setUpThirdStackView()
+        setUpValueStackView()
+        setUpPriceStackView()
     }
     
     func setUpClubImageView() {
@@ -157,21 +193,71 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
         secondDetailInfoStackView.addArrangedSubview(shirtNumberLabel)
     }
     
-    private func createCustomLabel(text: String) -> UILabel {
+    func setUpThirdStackView() {
+        contentView.addSubview(thirdInfoStackView)
+        
+        thirdInfoStackView.snp.makeConstraints { make in
+            make.top.equalTo(secondDetailInfoStackView.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.height.equalTo(150)
+        }
+        thirdInfoStackView.addArrangedSubview(valueStackView)
+
+        thirdInfoStackView.addArrangedSubview(priceView)
+    }
+    
+    func setUpValueStackView() {
+    
+        valueStackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(10)
+            make.height.equalTo(50)
+        }
+        
+        valueStackView.addArrangedSubview(valueLabel)
+        valueLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(15)
+        }
+        valueStackView.addArrangedSubview(questionLabel)
+    }
+    
+    func setUpPriceStackView() {
+        
+        priceView.snp.makeConstraints { make in
+            make.height.equalTo(70)
+        }
+        
+        priceView.addSubview(higherButton)
+        
+        higherButton.snp.makeConstraints { make in
+            make.height.width.equalTo(circleSize)
+            make.leading.equalToSuperview().offset(100)
+            make.centerY.equalToSuperview()
+        }
+        
+        priceView.addSubview(lowerButton)
+        
+        lowerButton.snp.makeConstraints { make in
+            make.height.width.equalTo(circleSize)
+            make.trailing.equalToSuperview().inset(100)
+            make.centerY.equalToSuperview()
+        }
+    }
+    
+    private func createCustomLabel(text: String, textColor: UIColor = #colorLiteral(red: 0.5873699188, green: 0.594819963, blue: 0.5993233323, alpha: 1), numberOfLines: Int = 2) -> UILabel {
         let label = UILabel()
         label.textAlignment = .center
         let textAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: #colorLiteral(red: 0.5873699188, green: 0.594819963, blue: 0.5993233323, alpha: 1),
+            .foregroundColor: textColor,
             .font: UIFont.systemFont(ofSize: 14)
         ]
         label.attributedText = NSAttributedString(string: text + "\n", attributes: textAttributes)
-        label.numberOfLines = 2
+        label.numberOfLines = numberOfLines
         return label
     }
     
-    private func createLabelAttributes(label: UILabel, text: String) {
+    private func createLabelAttributes(label: UILabel, text: String, textColor: UIColor = .white) {
         let textAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.white,
+            .foregroundColor: textColor,
             .font: UIFont.boldSystemFont(ofSize: 16)
         ]
         
@@ -181,6 +267,33 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
         let mutableString = NSMutableAttributedString(attributedString: defaultAttr)
         mutableString.append(dynamicAttr)
         label.attributedText = mutableString
+    }
+    
+    private func createCustomButton(arrowColor: UIColor = .systemGreen, isArrowDown: Bool = false) -> UIButton {
+        let button = UIButton(type: .system)
+        button.titleLabel?.numberOfLines = 2
+        button.titleLabel?.textAlignment = .center
+        
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 10, weight: .medium)
+        let euroSonfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .medium)
+        
+        let arrowImage = UIImage(systemName: isArrowDown ? "arrowtriangle.down.fill" : "arrowtriangle.up.fill", withConfiguration: symbolConfig)?.withTintColor(arrowColor, renderingMode: .alwaysOriginal)
+        let arrowAttachment = NSTextAttachment()
+        arrowAttachment.image = arrowImage
+        
+        let euroImage = UIImage(systemName: "eurosign.circle.fill", withConfiguration: euroSonfig)?.withTintColor(#colorLiteral(red: 0.6431311965, green: 0.6609790325, blue: 0.7016974092, alpha: 1), renderingMode: .alwaysOriginal)
+        let euroAttachment = NSTextAttachment()
+        euroAttachment.image = euroImage
+        
+        let attributedtitle = NSMutableAttributedString()
+        attributedtitle.append(isArrowDown ? NSAttributedString(attachment: euroAttachment) : NSAttributedString(attachment: arrowAttachment))
+        attributedtitle.append(NSAttributedString(string: "\n"))
+        attributedtitle.append(isArrowDown ? NSAttributedString(attachment: arrowAttachment) : NSAttributedString(attachment: euroAttachment))
+        
+        button.setAttributedTitle(attributedtitle, for: .normal)
+        button.backgroundColor = #colorLiteral(red: 0.09227979928, green: 0.1076720729, blue: 0.119504787, alpha: 1)
+        button.layer.cornerRadius = CGFloat(circleSize / 2)
+        return button
     }
     
     private func flagEmoji(for countryCode: String) -> String {
@@ -212,6 +325,22 @@ class PlayerInfo2CollectionViewCell: UICollectionViewCell {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter.string(from: date)
     }
+    
+    private func formatMarketValue(_ value: Int) -> String {
+        let million = 1_000_000
+        let thousand = 1_000
+        
+        if value >= million {
+            let formatted = Double(value) / Double(million)
+            return String(format: formatted >= 10 ? "%.0fM" : "%.1fM", formatted) + " €"
+        } else if value >= thousand {
+            let formatted = Double(value) / Double(thousand)
+            return String(format: formatted >= 10 ? "%.0fK" : "%.1fK", formatted) + " €"
+        } else {
+            return "\(value) €"
+        }
+    }
+
     
     private func countryFirstLetters(text: String) -> String{
         return String(text.prefix(3)).uppercased()

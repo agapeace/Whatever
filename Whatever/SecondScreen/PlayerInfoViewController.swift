@@ -31,6 +31,7 @@ class PlayerInfoViewController: UIViewController {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
         collection.register(PlayerInfoCollectionViewCell.self, forCellWithReuseIdentifier: PlayerInfoCollectionViewCell.identifier)
         collection.register(PlayerInfo2CollectionViewCell.self, forCellWithReuseIdentifier: PlayerInfo2CollectionViewCell.identifier)
+        collection.register(PlayerPositionCollectionViewCell.self, forCellWithReuseIdentifier: PlayerPositionCollectionViewCell.identifier)
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
@@ -42,7 +43,6 @@ class PlayerInfoViewController: UIViewController {
         view.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         setUpNavigationBar()
         setUpCollectionView()
-        requestPlayerInfo(playerId: player.id)
     }
     
     func createCollectionViewLayout() -> UICollectionViewCompositionalLayout{
@@ -50,8 +50,10 @@ class PlayerInfoViewController: UIViewController {
             switch sectionIndex {
             case 0:
                 return self.createFirstSection()
-            default:
+            case 1:
                 return self.createSecondSection()
+            default:
+                return self.createThirdSection()
             }
         }
     }
@@ -72,13 +74,28 @@ class PlayerInfoViewController: UIViewController {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(250))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: player.fullInfo?.proposedMarketValue == nil ? .absolute(250) : .absolute(400))
+//        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(400))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
         
         return section
     }
+    
+    func createThirdSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(320))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 10, leading: 0, bottom: 10, trailing: 0)
+        return section
+    }
+    
+    
     
     func setUpCollectionView() {
         view.addSubview(playerCollectionView)
@@ -99,8 +116,8 @@ class PlayerInfoViewController: UIViewController {
     
     func requestPlayerInfo(playerId: Int) {
         NetworkManager2.shared.fetchPlayerDetails(playerId: playerId) { [weak self] response in
-            self?.playerInfo = response
             DispatchQueue.main.async {
+                self?.playerInfo = response
                 self?.playerCollectionView.reloadData()
             }
         }
@@ -118,7 +135,8 @@ class PlayerInfoViewController: UIViewController {
 extension PlayerInfoViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return (playerInfo != nil) ? 2 : 1
+        guard let positions = player.positions else { return 2 }
+        return positions == [] ? 2 : 3
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -139,12 +157,22 @@ extension PlayerInfoViewController: UICollectionViewDelegate, UICollectionViewDa
             
             
             return cell
-        default:
+            
+        case 1:
             let cellId = PlayerInfo2CollectionViewCell.identifier
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PlayerInfo2CollectionViewCell
             
-            if let available = playerInfo {
+            if let available = player.fullInfo {
                 cell.configureElements(playerInfo: available, player: player)
+            }
+            return cell
+        default:
+            let cellId = PlayerPositionCollectionViewCell.identifier
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PlayerPositionCollectionViewCell
+            if let positions = player.positions {
+                print(positions)
+                cell.configurePositions(positions: positions)
             }
             return cell
         }
