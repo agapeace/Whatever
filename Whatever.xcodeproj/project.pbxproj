@@ -15,15 +15,21 @@
 		A7183E832DCA8D6A0084CE9D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A7183E822DCA8D6A0084CE9D /* SnapKit */; };
 		A72B38542DF6EF5C00BF34B1 /* SecondScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72B38532DF6EF5C00BF34B1 /* SecondScreen.swift */; };
 		A72B38572DF6F67600BF34B1 /* NetworkManager2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72B38562DF6F67600BF34B1 /* NetworkManager2.swift */; };
+		A75720112E0AD0B900FFD5C4 /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75720102E0AD0B900FFD5C4 /* MainScreen.swift */; };
+		A75720132E0ADE0D00FFD5C4 /* MatchesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75720122E0ADE0D00FFD5C4 /* MatchesCollectionViewCell.swift */; };
 		A783B4962DF809D000055888 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A783B4952DF809D000055888 /* ImageCollectionViewCell.swift */; };
 		A783B49A2DF9A4A700055888 /* PlayerInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A783B4992DF9A4A700055888 /* PlayerInfoViewController.swift */; };
 		A783B49C2DF9AC4700055888 /* PlayerInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A783B49B2DF9AC4700055888 /* PlayerInfoCollectionViewCell.swift */; };
 		A783B49E2DF9F8BB00055888 /* Hexcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A783B49D2DF9F8BB00055888 /* Hexcode.swift */; };
 		A78A55FF2DFA9500009C1AA4 /* PlayerInfo2CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78A55FE2DFA9500009C1AA4 /* PlayerInfo2CollectionViewCell.swift */; };
 		A799BFFD2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A799BFFC2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift */; };
+		A7A855872E0DBE4F003B249E /* SectionBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A855862E0DBE4F003B249E /* SectionBackgroundView.swift */; };
 		A7B560872DE61B22008E115E /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B560862DE61B22008E115E /* NetworkManager.swift */; };
 		A7B773092DF5B73300B0EDDC /* InfoFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B773082DF5B73300B0EDDC /* InfoFile.swift */; };
+		A7B85B662E0C4E9F005EB048 /* MatchHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B85B652E0C4E9F005EB048 /* MatchHeaderCollectionReusableView.swift */; };
 		A7EE69C72DEF70360085DE4C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A7EE69C62DEF70360085DE4C /* Kingfisher */; };
+		A7F8739D2E03315700507757 /* ConvertPositionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F8739C2E03315700507757 /* ConvertPositionImage.swift */; };
+		A7F8739F2E03323D00507757 /* PlayerPositionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F8739E2E03323D00507757 /* PlayerPositionCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,14 +42,20 @@
 		A7183E792DCA86CF0084CE9D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A72B38532DF6EF5C00BF34B1 /* SecondScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondScreen.swift; sourceTree = "<group>"; };
 		A72B38562DF6F67600BF34B1 /* NetworkManager2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager2.swift; sourceTree = "<group>"; };
+		A75720102E0AD0B900FFD5C4 /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
+		A75720122E0ADE0D00FFD5C4 /* MatchesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchesCollectionViewCell.swift; sourceTree = "<group>"; };
 		A783B4952DF809D000055888 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		A783B4992DF9A4A700055888 /* PlayerInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoViewController.swift; sourceTree = "<group>"; };
 		A783B49B2DF9AC4700055888 /* PlayerInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		A783B49D2DF9F8BB00055888 /* Hexcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hexcode.swift; sourceTree = "<group>"; };
 		A78A55FE2DFA9500009C1AA4 /* PlayerInfo2CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfo2CollectionViewCell.swift; sourceTree = "<group>"; };
 		A799BFFC2DEDDA3500EAB578 /* FirstSectionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstSectionCollectionViewCell.swift; sourceTree = "<group>"; };
+		A7A855862E0DBE4F003B249E /* SectionBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionBackgroundView.swift; sourceTree = "<group>"; };
 		A7B560862DE61B22008E115E /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		A7B773082DF5B73300B0EDDC /* InfoFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoFile.swift; sourceTree = "<group>"; };
+		A7B85B652E0C4E9F005EB048 /* MatchHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
+		A7F8739C2E03315700507757 /* ConvertPositionImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertPositionImage.swift; sourceTree = "<group>"; };
+		A7F8739E2E03323D00507757 /* PlayerPositionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPositionCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +130,12 @@
 				A783B4992DF9A4A700055888 /* PlayerInfoViewController.swift */,
 				A783B49B2DF9AC4700055888 /* PlayerInfoCollectionViewCell.swift */,
 				A78A55FE2DFA9500009C1AA4 /* PlayerInfo2CollectionViewCell.swift */,
+				A7F8739E2E03323D00507757 /* PlayerPositionCollectionViewCell.swift */,
+				A7F8739C2E03315700507757 /* ConvertPositionImage.swift */,
+				A75720102E0AD0B900FFD5C4 /* MainScreen.swift */,
+				A75720122E0ADE0D00FFD5C4 /* MatchesCollectionViewCell.swift */,
+				A7B85B652E0C4E9F005EB048 /* MatchHeaderCollectionReusableView.swift */,
+				A7A855862E0DBE4F003B249E /* SectionBackgroundView.swift */,
 			);
 			path = SecondScreen;
 			sourceTree = "<group>";
@@ -201,6 +219,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7A855872E0DBE4F003B249E /* SectionBackgroundView.swift in Sources */,
+				A75720112E0AD0B900FFD5C4 /* MainScreen.swift in Sources */,
 				A783B49E2DF9F8BB00055888 /* Hexcode.swift in Sources */,
 				A7B560872DE61B22008E115E /* NetworkManager.swift in Sources */,
 				A7183E7E2DCA86CF0084CE9D /* AppDelegate.swift in Sources */,
@@ -209,10 +229,14 @@
 				A7B773092DF5B73300B0EDDC /* InfoFile.swift in Sources */,
 				A7183E7F2DCA86CF0084CE9D /* SceneDelegate.swift in Sources */,
 				A783B4962DF809D000055888 /* ImageCollectionViewCell.swift in Sources */,
+				A7F8739D2E03315700507757 /* ConvertPositionImage.swift in Sources */,
+				A7F8739F2E03323D00507757 /* PlayerPositionCollectionViewCell.swift in Sources */,
 				A7183E802DCA86CF0084CE9D /* ViewController.swift in Sources */,
 				A72B38572DF6F67600BF34B1 /* NetworkManager2.swift in Sources */,
 				A78A55FF2DFA9500009C1AA4 /* PlayerInfo2CollectionViewCell.swift in Sources */,
 				A783B49C2DF9AC4700055888 /* PlayerInfoCollectionViewCell.swift in Sources */,
+				A75720132E0ADE0D00FFD5C4 /* MatchesCollectionViewCell.swift in Sources */,
+				A7B85B662E0C4E9F005EB048 /* MatchHeaderCollectionReusableView.swift in Sources */,
 				A783B49A2DF9A4A700055888 /* PlayerInfoViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
