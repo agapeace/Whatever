@@ -1,12 +1,6 @@
-//
-//  MainScreen.swift
-//  Whatever
-//
-//  Created by Damir Agadilov  on 24.06.2025.
-//
-
 import Foundation
 import UIKit
+import SnapKit
 
 class MainScreen: UIViewController {
     
@@ -23,35 +17,67 @@ class MainScreen: UIViewController {
         return collection
     }()
     
+    private lazy var mainSearchTextField: UISearchTextField = {
+        let searchTextField = UISearchTextField()
+        searchTextField.delegate = self
+        searchTextField.attributedPlaceholder = NSAttributedString(string: "Type in m'lady", attributes: [.foregroundColor: #colorLiteral(red: 0.6099359989, green: 0.6172198057, blue: 0.6297825575, alpha: 1)])
+        searchTextField.leftView?.subviews.first?.tintColor = #colorLiteral(red: 0.6099359989, green: 0.6172198057, blue: 0.6297825575, alpha: 1)
+        searchTextField.textColor = .white
+        if let leftView = searchTextField.leftView as? UIImageView {
+            leftView.tintColor = #colorLiteral(red: 0.6099359989, green: 0.6172198057, blue: 0.6297825575, alpha: 1)
+        }
+        searchTextField.layer.cornerRadius = 15
+        
+        return searchTextField
+    }()
+    
+    private let loaderView: UIActivityIndicatorView = {
+        let loader = UIActivityIndicatorView(style: .large)
+        loader.hidesWhenStopped = true
+        loader.color = .white
+        return loader
+    }()
+    
+  
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .black
         
+        setUpSearchTextField()
         setUpMatchesCollectionView()
+        setUpLoaderView()
         fetchLiveMatches()
     }
     
     private func fetchLiveMatches() {
+        loaderView.startAnimating()
         NetworkManager2.shared.fetchLiveMatches { [weak self] collection in
             self?.resourseArr = collection
-            print("Hellooooo")
-            guard let firstElement = self?.resourseArr[0][0] else { return }
-            
-            print(firstElement)
-            
-            let startTime = self?.convertTimestampAndCalculateYears(from: TimeInterval(firstElement.startTimestamp))
-            let changeTime = self?.convertTimestampAndCalculateYears(from: TimeInterval(firstElement.changes.changeTimeStamp ?? 100))
-            let currentTime = self?.convertTimestampAndCalculateYears(from: TimeInterval(firstElement.time.currentPeriodStartTimestamp ?? 100))
-            
-            print("Startime is: \(String(describing: startTime?.date))")
-            print("ChangeTime is: \(String(describing: changeTime?.date))")
-            print("currentTime is: \(String(describing: currentTime?.date))")
             
             DispatchQueue.main.async {
+                self?.loaderView.stopAnimating()
                 self?.matchesCollectionView.reloadData()
             }
         }
+    }
+    
+    private func setUpSearchTextField() {
+        view.addSubview(mainSearchTextField)
+        
+        mainSearchTextField.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.height.equalTo(70)
+        }
+        
+        mainSearchTextField.addTarget(self, action: #selector(handleSearchTap), for: .editingDidBegin)
+    }
+    
+    @objc private func handleSearchTap() {
+        mainSearchTextField.resignFirstResponder()
+        animateToSearch()
     }
     
     private func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
@@ -90,13 +116,34 @@ class MainScreen: UIViewController {
         return section
     }
     
+    private func createSliderSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(250))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .groupPaging
+        return section
+    }
+    
     private func setUpMatchesCollectionView() {
         view.addSubview(matchesCollectionView)
         
         matchesCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(mainSearchTextField.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(10)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
+    }
+    
+    private func setUpLoaderView() {
+        view.addSubview(loaderView)
+        
+        loaderView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(100)
         }
     }
     
@@ -120,7 +167,6 @@ extension MainScreen: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return section % 2 == 0 ? 2 : 1
         return resourseArr.isEmpty ? 0 : resourseArr[section].count
     }
 
@@ -137,14 +183,37 @@ extension MainScreen: UICollectionViewDelegate, UICollectionViewDataSource {
         if kind == UICollectionView.elementKindSectionHeader {
             let headerId = MatchHeaderCollectionReusableView.identifier
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! MatchHeaderCollectionReusableView
-            let currentSection = resourseArr[indexPath.section][0]
-            headerView.configureElements(
-                tournamentId: currentSection.tournament.uniqueTournament?.id ?? currentSection.tournament.id,
-                name: currentSection.tournament.name,
-                country: currentSection.tournament.category.country?.alpha2 ?? "CA")
+            if !resourseArr.isEmpty {
+                let currentSection = resourseArr[indexPath.section][0]
+                headerView.configureElements(
+                    tournamentId: currentSection.tournament.uniqueTournament?.id ?? currentSection.tournament.id,
+                    name: currentSection.tournament.name,
+                    country: currentSection.tournament.category.country?.alpha2 ?? "CA")
+            }
+            
             return headerView
         }
         
         return UICollectionReusableView()
+    }
+}
+
+extension MainScreen: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+    }
+    
+    func animateToSearch() {
+        let searchVC = SecondScreen()
+        searchVC.shouldBecomeFirstResponder = true
+        addChild(searchVC)
+        view.addSubview(searchVC.view)
+        
+        searchVC.view.frame = view.bounds.offsetBy(dx: 0, dy: view.bounds.height)
+        searchVC.didMove(toParent: self)
+        
+        UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut]) {
+            searchVC.view.frame = self.view.bounds
+        }
     }
 }

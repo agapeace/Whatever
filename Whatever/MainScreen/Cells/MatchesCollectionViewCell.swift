@@ -1,10 +1,3 @@
-//
-//  MatchesCollectionViewCell.swift
-//  Whatever
-//
-//  Created by Damir Agadilov  on 24.06.2025.
-//
-
 import UIKit
 import Kingfisher
 

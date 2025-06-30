@@ -1,10 +1,3 @@
-//
-//  ImageCollectionViewCell.swift
-//  Whatever
-//
-//  Created by Damir Agadilov  on 10.06.2025.
-//
-
 import UIKit
 import Kingfisher
 

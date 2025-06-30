@@ -1,10 +1,3 @@
-//
-//  SecondScreen.swift
-//  Whatever
-//
-//  Created by Damir Agadilov  on 09.06.2025.
-//
-
 import UIKit
 
 enum PlayerFetchType: Hashable {
@@ -21,9 +14,8 @@ class SecondScreen: UIViewController {
     
     private lazy var searchTextField: UISearchTextField = {
         let searchTextField = UISearchTextField()
-        searchTextField.placeholder = "Type in m'facka"
         searchTextField.delegate = self
-        searchTextField.attributedPlaceholder = NSAttributedString(string: "Type in m'facka", attributes: [.foregroundColor: #colorLiteral(red: 0.6099359989, green: 0.6172198057, blue: 0.6297825575, alpha: 1)])
+        searchTextField.attributedPlaceholder = NSAttributedString(string: "Type in m'lady", attributes: [.foregroundColor: #colorLiteral(red: 0.6099359989, green: 0.6172198057, blue: 0.6297825575, alpha: 1)])
         searchTextField.leftView?.subviews.first?.tintColor = #colorLiteral(red: 0.6099359989, green: 0.6172198057, blue: 0.6297825575, alpha: 1)
         searchTextField.textColor = .white
         if let leftView = searchTextField.leftView as? UIImageView {
@@ -42,10 +34,24 @@ class SecondScreen: UIViewController {
         return collection
     }()
     
+    private let loaderView: UIActivityIndicatorView = {
+        let loader = UIActivityIndicatorView(style: .large)
+        loader.color = .white
+        loader.hidesWhenStopped = true
+        return loader
+    }()
+    
+    private let cancelButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Cancel", for: .normal)
+        return button
+    }()
+    
     private var resourceArr: [ResultResponse] = []
     private var fetchingSet = Set<PlayerFetchKey>()
     private let resourceLock = NSLock()
     private var cancelledPrefetchSet = Set<PlayerFetchKey>()
+    var shouldBecomeFirstResponder: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,15 +59,18 @@ class SecondScreen: UIViewController {
         view.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         
         setUpSearchTextField()
+        setUpCancelButton()
         setUpPersonCollectionView()
+        setUpLoaderView()
     }
     
     func setUpSearchTextField() {
         view.addSubview(searchTextField)
         
         searchTextField.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(5)
-            make.leading.trailing.equalToSuperview().inset(5)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().inset(80)
             make.height.equalTo(60)
         }
     }
@@ -73,6 +82,43 @@ class SecondScreen: UIViewController {
             make.top.equalTo(searchTextField.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(5)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(10)
+        }
+    }
+    
+    func setUpLoaderView() {
+        view.addSubview(loaderView)
+        
+        loaderView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(100)
+        }
+    }
+    
+    private func setUpCancelButton() {
+        view.addSubview(cancelButton)
+        
+        cancelButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.equalTo(searchTextField.snp.trailing).offset(5)
+            make.trailing.equalToSuperview().inset(5)
+            make.height.equalTo(60)
+        }
+        
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func cancelButtonTapped() {
+        self.willMove(toParent: nil)
+        self.view.removeFromSuperview()
+        self.removeFromParent()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if shouldBecomeFirstResponder {
+            searchTextField.becomeFirstResponder()
+            shouldBecomeFirstResponder = false
         }
     }
     
@@ -99,12 +145,13 @@ class SecondScreen: UIViewController {
 extension SecondScreen: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let text = textField.text else { return false }
+        loaderView.startAnimating()
         NetworkManager2.shared.searchBarRequest(item: text, type: .all, page: 0) { response in
             DispatchQueue.main.async {
                 self.resourceLock.lock()
                 self.resourceArr = response
                 self.resourceLock.unlock()
-            
+                self.loaderView.stopAnimating()
                 self.personCollectionView.reloadData()
                 
                 print("Presumably prefetching visible values")

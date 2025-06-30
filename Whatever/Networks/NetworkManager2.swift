@@ -1,10 +1,3 @@
-//
-//  NetworkManager2.swift
-//  Whatever
-//
-//  Created by Damir Agadilov  on 09.06.2025.
-//
-
 import UIKit
 import Kingfisher
 
@@ -18,8 +11,6 @@ class NetworkManager2 {
     private let headers = ["x-rapidapi-key": "5fcfe43b1dmshfdd3b392a75d3b4p13091fjsn6c63b490e455",
                            "x-rapidapi-host": "sofascore.p.rapidapi.com"]
     static let shared = NetworkManager2()
-    
-    
     func searchBarRequest(item: String, type: SearchType, page: Int, completion: @escaping ([ResultResponse]) -> Void) {
         var urlComponents = URLComponents(string: "https://sofascore.p.rapidapi.com/search")
         urlComponents?.queryItems = [
@@ -149,8 +140,6 @@ class NetworkManager2 {
             do {
                 let parsedData = try JSONDecoder().decode(LiveMatchesResponse.self, from: data)
                 let sortedAnswer = self.createLiveMatchResource(resourceArr: parsedData.events)
-                print("Aleeeeee")
-                print(sortedAnswer.count)
                 completion(sortedAnswer)
             } catch {
                 print(error)

@@ -1,10 +1,3 @@
-//
-//  PlayerInfo2CollectionViewCell.swift
-//  Whatever
-//
-//  Created by Damir Agadilov  on 12.06.2025.
-//
-
 import UIKit
 import Kingfisher
 

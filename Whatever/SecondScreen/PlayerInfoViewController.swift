@@ -1,10 +1,3 @@
-//
-//  PlayerInfoViewController.swift
-//  Whatever
-//
-//  Created by Damir Agadilov  on 11.06.2025.
-//
-
 import UIKit
 
 class PlayerInfoViewController: UIViewController {
@@ -151,7 +144,8 @@ extension PlayerInfoViewController: UICollectionViewDelegate, UICollectionViewDa
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PlayerInfoCollectionViewCell
             cell.configureElements(playerId: player.id,
                                    playerName: player.name,
-                                   firstColor: UIColor(hex: player.team?.teamColors?.primary ?? "272C32"))
+                                   firstColor: .yellow)
+//                                   firstColor: UIColor(hex: player.team?.teamColors?.primary ?? "272C32"))
             
 //            cell.configureElements(playerId: playerId, playerName: playerName, firstColor: .yellow)
             
