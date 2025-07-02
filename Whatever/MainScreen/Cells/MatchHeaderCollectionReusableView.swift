@@ -4,39 +4,13 @@ class MatchHeaderCollectionReusableView: UICollectionReusableView {
         
     static let identifier = "MatchHeaderCollectionReusableView"
     
-    private let tournamentImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "ron")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    private let tournamentNameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Tournament Name"
-        label.font = UIFont.boldSystemFont(ofSize: 17)
-        label.numberOfLines = 0
-        label.textColor = .white
-        return label
-    }()
+    private let tournamentImageView = UIImageView()
+    private let tournamentNameLabel = UILabel()
+    private let viewModel = MainScreenViewModel()
     
     func configureElements(tournamentId: Int, name: String, country: String) {
         self.tournamentNameLabel.text = name
-        let tournamentURL = URL(string: "https://sofascore.p.rapidapi.com/tournaments/get-logo?tournamentId=\(tournamentId)")
-        let modifier = NetworkManager2.shared.createRequest()
-//        self.tournamentImageView.kf.setImage(with: tournamentURL, options: [.requestModifier(modifier)]) { [self] result in
-//            switch result {
-//            case .success(let value):
-//                if value.image.size == .zero {
-//                    print("204 No Content for id: \(tournamentId)")
-//                    tournamentImageView.image = flagEmojiImage(for: country)
-//                }
-//                
-//            case .failure(let error):
-//                print("Failure for id \(tournamentId) \(error)")
-//                
-//                tournamentImageView.image = flagEmojiImage(for: country)
-//            }
-//        }
+        updateTournamentImageView(for: tournamentImageView, tournamentId: tournamentId, country: country)
     }
     
     override init(frame: CGRect) {
@@ -45,8 +19,38 @@ class MatchHeaderCollectionReusableView: UICollectionReusableView {
         setUpTournamentNameLabel()
     }
     
-    private func setUpTournamentImageView() {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+//MARK: - Updating UI Elements
+
+private extension MatchHeaderCollectionReusableView {
+    ///Method for updating Tournament Image
+    func updateTournamentImageView(for imageView: UIImageView, tournamentId: Int, country: String) {
+        let tournamentContent = viewModel.createKingfisherAttributes(id: tournamentId, stringType: .tournamentLogo)
+        imageView.kf.setImage(with: tournamentContent.0, options: [.requestModifier(tournamentContent.1)]) { [weak self] result in
+            switch result {
+            case .success(let value):
+                if value.image.size == .zero {
+                    imageView.image = self?.viewModel.flagEmojiImage(for: country)
+                }
+            case .failure:
+                imageView.image = self?.viewModel.flagEmojiImage(for: country)
+            }
+        }
+    }
+}
+
+//MARK: - UI Elements SetUp
+
+private extension MatchHeaderCollectionReusableView {
+    ///Method for setting tournament ImageView
+    func setUpTournamentImageView() {
         addSubview(tournamentImageView)
+        tournamentImageView.image = UIImage(named: "ron")
+        tournamentImageView.contentMode = .scaleAspectFit
         
         tournamentImageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -55,40 +59,18 @@ class MatchHeaderCollectionReusableView: UICollectionReusableView {
         }
     }
     
-    private func setUpTournamentNameLabel() {
+    ///Method for setting up the tournament Label
+    func setUpTournamentNameLabel() {
         addSubview(tournamentNameLabel)
-        
+        tournamentNameLabel.text = "Tournament Name"
+        tournamentNameLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        tournamentNameLabel.numberOfLines = 0
+        tournamentNameLabel.textColor = .white
         tournamentNameLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(tournamentImageView.snp.trailing).offset(43)
             make.trailing.equalToSuperview().inset(10)
             make.height.equalTo(45)
         }
-    }
-    
-    func flagEmojiImage(for countryCode: String, fontSize: CGFloat = 40) -> UIImage? {
-        let base : UInt32 = 127397
-        var emoji = ""
-        for scalar in countryCode.uppercased().unicodeScalars {
-            guard let scalarValue = UnicodeScalar(base + scalar.value) else { return nil }
-            emoji.unicodeScalars.append(scalarValue)
-        }
-
-        let label = UILabel()
-        label.text = emoji
-        label.font = .systemFont(ofSize: fontSize)
-        label.sizeToFit()
-
-        UIGraphicsBeginImageContextWithOptions(label.bounds.size, false, 0.0)
-        label.layer.render(in: UIGraphicsGetCurrentContext()!)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return image
-    }
-
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

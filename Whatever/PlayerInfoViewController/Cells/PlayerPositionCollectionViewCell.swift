@@ -3,38 +3,44 @@ import UIKit
 class PlayerPositionCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "PlayerPositionCollectionViewCell"
-    
+    ///Array that contains players position
     private var playerPositions: [String] = []
-    
-    private let playerPositionImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleToFill
-        imageView.image = UIImage(named: "pitch")
-        return imageView
-    }()
-    
-    func configurePositions(positions: [String]) {
-        self.playerPositions = positions
-        layoutIfNeeded()
-        renderMarkers()
-    }
-
+    ///ImageVIew for displaying players position on the pitch
+    private let playerPositionImageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        contentView.backgroundColor = #colorLiteral(red: 0.1526213586, green: 0.1714697778, blue: 0.1979335845, alpha: 1)
+        contentView.layer.cornerRadius = 15
         setUpPlayerPositionImageView()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+//MARK: - UI Element Configuration
+
+extension PlayerPositionCollectionViewCell {
+    func configurePositions(positions: [String]) {
+        self.playerPositions = positions
+        layoutIfNeeded()
+        renderMarkers()
+    }
+}
+
+//MARK: - UI Elements SetUp
+private extension PlayerPositionCollectionViewCell {
+    ///Method for setting up playerPositionImageView
     func setUpPlayerPositionImageView() {
         contentView.addSubview(playerPositionImageView)
-        contentView.backgroundColor = #colorLiteral(red: 0.1526213586, green: 0.1714697778, blue: 0.1979335845, alpha: 1)
-        contentView.layer.cornerRadius = 15
+        playerPositionImageView.contentMode = .scaleToFill
+        playerPositionImageView.image = UIImage(named: "pitch")
         playerPositionImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.leading.trailing.equalToSuperview().inset(85)
@@ -42,7 +48,7 @@ class PlayerPositionCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    private func renderMarkers() {
+    func renderMarkers() {
         playerPositionImageView.subviews.forEach { $0.removeFromSuperview() }
 
         guard playerPositionImageView.bounds != .zero else { return }
@@ -51,7 +57,11 @@ class PlayerPositionCollectionViewCell: UICollectionViewCell {
             addPlayerMarker(position: position)
         }
     }
-    
+}
+
+//MARK: - Adding Player Position
+private extension PlayerPositionCollectionViewCell {
+    ///Method for adding marker on the pitch based on player position
     func addPlayerMarker(position: String) {
         guard playerPositionImageView.bounds != .zero else { return }
 
@@ -72,9 +82,5 @@ class PlayerPositionCollectionViewCell: UICollectionViewCell {
 
         markerView.addSubview(label)
         playerPositionImageView.addSubview(markerView)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -5,95 +5,28 @@ class ImageCollectionViewCell: UICollectionViewCell {
     
     
     static let identifier = "ImageCollectionViewCell"
+
     private let circleSize = 100
     private let smallCircleSize = 25
-    private lazy var playerImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "ron")
-        imageView.layer.cornerRadius = CGFloat(circleSize / 2)
-        imageView.clipsToBounds = true
-        return imageView
-    }()
+
+    ///ImageView that shows player
+    private lazy var playerImageView = createImageView(isSystemImage: false, cornerRadius: CGFloat(circleSize))
+    ///Players name label
+    private lazy var playerNameLabel = createLabel(font: UIFont.boldSystemFont(ofSize: 20))
+    ///FirstStackView that contains Club Image + Name + Additional Information
+    private lazy var firstStackView = createStackView(axis: .horizontal, alignment: .center, distribution: .fill)
+    ///SecondStackView that contains firstStackView + PlayerNameLabel
+    private lazy var secondStackView = createStackView(axis: .vertical, alignment: .fill, distribution: .fill)
+    private lazy var clubImageView = createImageView(isSystemImage: false, cornerRadius: CGFloat(smallCircleSize))
+    private lazy var clubLabel = createLabel(isSizeToFit: true)
     
-    private let playerNameLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.boldSystemFont(ofSize: 20)
-        label.backgroundColor = .clear
-        label.textColor = .white
-        label.text = "Default text"
-        return label
-    }()
+    ///Additional information such as: Football Icon, Football text etc.
+    private lazy var circleImageView = createImageView(isSystemImage: true, tintColor: #colorLiteral(red: 0.3028887808, green: 0.3154447377, blue: 0.3345597088, alpha: 1))
+    private lazy var footballIconImageView = createImageView(isSystemImage: true, systemName: "soccerball.inverse", tintColor: #colorLiteral(red: 0.3028887808, green: 0.3154447377, blue: 0.3345597088, alpha: 1))
+    private lazy var footballLabel = createLabel(text: "Football")
     
-    private let firstStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.distribution = .fill
-        stackView.spacing = 10
-        return stackView
-    }()
-    
-    private let secondStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.spacing = 10
-        return stackView
-    }()
-    
-    private lazy var clubImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "ron")
-        imageView.layer.cornerRadius = CGFloat(smallCircleSize / 2)
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-    
-    private let clubLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Default club"
-        label.textColor = .white
-        label.sizeToFit()
-        return label
-    }()
-    
-    private let circleImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(systemName: "circle.fill")
-        imageView.tintColor = #colorLiteral(red: 0.3028887808, green: 0.3154447377, blue: 0.3345597088, alpha: 1)
-        return imageView
-    }()
-    
-    private let footballIconImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(systemName: "soccerball.inverse")
-        imageView.tintColor = #colorLiteral(red: 0.3028887808, green: 0.3154447377, blue: 0.3345597088, alpha: 1)
-        return imageView
-    }()
-    
-    private let footballLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Football"
-        label.textColor = .white
-        return label
-    }()
-    
-    func configureElements(playerId: Int, playerName: String, clubId: Int, clubName: String) {
-        
-        self.playerNameLabel.text = playerName
-        self.clubLabel.text = clubName
-        let modifier = NetworkManager2.shared.createRequest()
-        let playerUrl = URL(string: "https://sofascore.p.rapidapi.com/players/get-image?playerId=\(playerId)")
-        let clubUrl = URL(string: "https://sofascore.p.rapidapi.com/teams/get-logo?teamId=\(clubId)")
-        playerImageView.kf.setImage(with: playerUrl, options: [.requestModifier(modifier)])
-        clubImageView.kf.setImage(with: clubUrl, options:[.requestModifier(modifier)])
-    }
+    ///Instance of viewModel class
+    private let viewModel = SecondScreenViewModel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -105,7 +38,40 @@ class ImageCollectionViewCell: UICollectionViewCell {
         setUpSecondStackView()
         setUpFirstStackView()
     }
+        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
+}
+
+//MARK: - Configuration Method that is called form cellForItemAt
+
+extension ImageCollectionViewCell {
+    func configureElements(entity: EntityResponse) {
+        
+        self.playerNameLabel.text = entity.name
+        self.clubLabel.text = entity.team?.name
+    
+        updateImageView(for: playerImageView, id: entity.id, stringType: .playerImage)
+        updateImageView(for: clubImageView, id: entity.team?.id ?? 1, stringType: .teamsLogo)
+    }
+}
+
+//MARK: - Update UI Elements
+
+private extension ImageCollectionViewCell {
+    ///Method for making request to iamgeView by Kingfisher
+    func updateImageView(for imageView: UIImageView, id: Int, stringType: URLStringTypes) {
+        let (url, modifier) = viewModel.createKingfisherAttributes(id: id, stringType: stringType)
+        imageView.kf.setImage(with: url, options: [.requestModifier(modifier)])
+    }
+}
+
+//MARK: - UI Elements Set Up
+
+private extension ImageCollectionViewCell {
+    ///Method for setting up PlayerImageView
     func setUpPlayerImageView() {
         contentView.addSubview(playerImageView)
         
@@ -115,7 +81,7 @@ class ImageCollectionViewCell: UICollectionViewCell {
             make.leading.equalToSuperview().offset(10)
         }
     }
-    
+    ///Method for setting up SecondStackView
     func setUpSecondStackView() {
         contentView.addSubview(secondStackView)
         
@@ -129,7 +95,7 @@ class ImageCollectionViewCell: UICollectionViewCell {
         secondStackView.addArrangedSubview(playerNameLabel)
         secondStackView.addArrangedSubview(firstStackView)
     }
-    
+    ///Method for setting up firstStackView
     func setUpFirstStackView() {
         firstStackView.addArrangedSubview(clubImageView)
         firstStackView.addArrangedSubview(clubLabel)
@@ -153,7 +119,7 @@ class ImageCollectionViewCell: UICollectionViewCell {
         }
         
     }
-    
+    ///Method for setting up Player NameLabel
     func setUpPlayerNameLabel() {
         contentView.addSubview(playerNameLabel)
         
@@ -163,9 +129,40 @@ class ImageCollectionViewCell: UICollectionViewCell {
             make.height.equalTo(50)
         }
     }
-        
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+}
+
+//MARK: - UI Element Configurations
+
+private extension ImageCollectionViewCell {
+    ///Method for creatng ImageView based on provided properties
+    func createImageView(isSystemImage: Bool, systemName: String = "circle.fill", contentMode: UIImageView.ContentMode = .scaleAspectFill, cornerRadius: CGFloat = 0, tintColor: UIColor = .clear) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.contentMode = contentMode
+        imageView.layer.cornerRadius = cornerRadius == 0 ? 0 : cornerRadius / 2
+        imageView.clipsToBounds = true
+        imageView.tintColor = tintColor != .clear ? tintColor : nil
+        imageView.image = isSystemImage ? UIImage(systemName: systemName) : nil
+        return imageView
     }
     
+    ///Method for creating stackView
+    func createStackView(axis: NSLayoutConstraint.Axis, alignment: UIStackView.Alignment, distribution: UIStackView.Distribution, spacing: CGFloat = 10) -> UIStackView {
+        let stackView = UIStackView()
+        stackView.axis = axis
+        stackView.alignment = alignment
+        stackView.distribution = distribution
+        stackView.spacing = spacing
+        return stackView
+    }
+    
+    ///Method for creating Labels
+    func createLabel(text: String = "", textColor: UIColor = .white, font: UIFont? = nil, isSizeToFit: Bool = false, numberOfLines: Int = 1) -> UILabel {
+        let label = UILabel()
+        label.numberOfLines = numberOfLines
+        label.text = text
+        label.textColor = textColor
+        label.font = font == nil ? nil : font
+        isSizeToFit ? label.sizeToFit() : ()
+        return label
+    }
 }
