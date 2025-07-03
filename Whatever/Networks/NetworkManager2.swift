@@ -14,7 +14,7 @@ enum URLStringTypes: String {
 class NetworkManager2 {
     
     private init() {}
-    private let headers = ["x-rapidapi-key": "b4159b0e50msha04006c7d789f6ap1aa693jsn091e0d919c12",
+    private let headers = ["x-rapidapi-key": "///",
                            "x-rapidapi-host": "sofascore.p.rapidapi.com"]
     static let shared = NetworkManager2()
     
