@@ -76,6 +76,7 @@
 
    ![detail](https://github.com/user-attachments/assets/25e56ef5-f3d7-4d26-9c07-40ef1aa01ed8)
 
+### Логика экрана (PlayerInfoViewController)
 
 
 ***
