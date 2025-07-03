@@ -14,7 +14,8 @@
    * Счет команд
 3. Транслируемые матчи группированы по одинаковым турнаментам в различные секции
 
-///ScreenShot #1
+![Снимок экрана 2025-07-03 в 12 55 30](https://github.com/user-attachments/assets/cfe4aab7-3065-4821-a18e-b4be1395a0c0)
+
 
 ### Логика Экрана (MainScreen):
 1. Используются два UI-элемента: UISearchTextField и UICollectionView.
