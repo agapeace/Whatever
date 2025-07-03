@@ -73,7 +73,8 @@
    * Рыночная цена
 3. Изоброжение позиций игрока на футбольном поле
 
-   ![Снимок экрана 2025-07-03 в 11 40 03](https://github.com/user-attachments/assets/fcde4765-3bd9-4e2f-a916-b0c2e62c468d) ![Снимок экрана 2025-07-03 в 12 26 11](https://github.com/user-attachments/assets/e0a716ea-c00f-42e1-9742-94e3d8b4a104)
+   ![Снимок экрана 2025-07-03 в 11 40 03](https://github.com/user-attachments/assets/fcde4765-3bd9-4e2f-a916-b0c2e62c468d)
+   ![Снимок экрана 2025-07-03 в 12 26 11](https://github.com/user-attachments/assets/e0a716ea-c00f-42e1-9742-94e3d8b4a104)
 
    
 
